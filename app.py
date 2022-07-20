@@ -1,29 +1,32 @@
 import streamlit as st
-
-st.title('This is a title')
-st.write('Hello WOrld!!!')
-st.text('This is some text.')
-age = st.slider('How old are you?', 0, 130, 25)
-st.write("I'm ", age, 'years old')
-import streamlit as st
-
-picture = st.camera_input("Take a picture")
-
-if picture:
-     st.image(picture)
+import sqlite3
 
 
-import streamlit as st
+con = sqlite3.connect('db.db')
+cur = con.cursor()
 
-# Using object notation
-add_selectbox = st.sidebar.selectbox(
-    "How would you like to be contacted?",
-    ("Email", "Home phone", "Mobile phone")
-)
+def login_user(id, pw):
+    cur.execute(f"SELECT * FROM users WHERE id = '{id}' and pwd = '{pw}'")
+    return cur . fetchone()
+menu = st.sidebar.selectbox('MENU', options=['로그인','회원가입','회원목록'])
 
-# Using "with" notation
-with st.sidebar:
-    add_radio = st.radio(
-        "Choose a shipping method",
-        ("Standard (5-15 days)", "Express (2-5 days)")
-    )
+if menu == '로그인':
+    st.subheader('로그인')
+
+    login_id = st.text_input('아이디', placeholder = "아이디를 입력하세요")
+    login_pw = st.text_input('패스워드' ,
+                             placeholder = "비밀번호를 입력하세요",
+                             type = 'password')
+
+    login_btn = st.button('로그인')
+    if login_btn:
+        user_info = login_user(login_id, login_pw)
+        st.write(user_info[4],'님 환영합니다')
+
+
+if menu == '회원가입':
+    st.subheader('회원가입')
+    st.sidebar.write('회원가입')
+if menu == '회원목록':
+    st.subheader('회원목록')
+    st.sidebar.write('회원목록')
